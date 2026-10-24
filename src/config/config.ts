@@ -43,6 +43,12 @@ export const config = {
   database: {
     path: str('DATABASE_PATH', './data/stellarpos.db'),
   },
+  email: {
+    // 'log' (default) prints emails; 'resend' sends through api.resend.com.
+    provider: str('EMAIL_PROVIDER', 'log'),
+    apiKey: str('EMAIL_API_KEY', ''),
+    from: str('EMAIL_FROM', 'StellarPOS <receipts@example.com>'),
+  },
   backup: {
     dir: str('BACKUP_DIR', './data/backups'),
     intervalHours: int('BACKUP_INTERVAL_HOURS', 0),
@@ -83,6 +89,9 @@ export const config = {
 
 if (config.isProd && config.jwt.secret.length < 32) {
   throw new Error('JWT_SECRET must be at least 32 characters in production');
+}
+if (config.email.provider === 'resend' && !config.email.apiKey) {
+  throw new Error('EMAIL_API_KEY is required when EMAIL_PROVIDER=resend');
 }
 if (config.store.taxRateBps < 0 || config.store.taxRateBps > 10_000) {
   throw new Error('TAX_RATE_BPS must be between 0 and 10000');
