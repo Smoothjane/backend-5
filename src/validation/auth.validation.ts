@@ -33,3 +33,17 @@ export const updateProfileSchema = Joi.object({
 })
   .with('newPassword', 'currentPassword')
   .min(1);
+
+const otp = Joi.string().trim().min(6).max(12).required();
+
+export const totpCodeSchema = Joi.object({ code: otp });
+
+export const disableTwoFactorSchema = Joi.object({
+  password: Joi.string().required(),
+  code: otp,
+});
+
+export const verifyTwoFactorSchema = Joi.object({
+  challenge: Joi.string().required(),
+  code: otp,
+});

@@ -125,6 +125,15 @@ CREATE TABLE IF NOT EXISTS audit_log (
 CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at);
 CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_log(user_id, created_at);
 
+CREATE TABLE IF NOT EXISTS user_totp (
+  user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  secret_enc TEXT,
+  pending_enc TEXT,
+  recovery_hashes TEXT NOT NULL DEFAULT '[]',
+  last_step INTEGER NOT NULL DEFAULT 0,
+  enabled_at TEXT
+);
+
 CREATE TABLE IF NOT EXISTS kv (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL

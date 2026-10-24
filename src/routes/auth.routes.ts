@@ -2,10 +2,18 @@ import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { config } from '@/config/config';
 import * as auth from '@/controllers/auth.controller';
+import * as twoFactor from '@/controllers/twoFactor.controller';
 import { authenticate } from '@/middleware/auth.middleware';
 import { validateBody } from '@/middleware/validate.middleware';
 import { asyncHandler } from '@/utils/helpers';
-import { loginSchema, registerSchema, updateProfileSchema } from '@/validation/auth.validation';
+import {
+  disableTwoFactorSchema,
+  loginSchema,
+  registerSchema,
+  totpCodeSchema,
+  updateProfileSchema,
+  verifyTwoFactorSchema,
+} from '@/validation/auth.validation';
 
 const router = Router();
 
@@ -25,6 +33,28 @@ router.post(
   asyncHandler(auth.register),
 );
 router.post('/login', credentialLimiter, validateBody(loginSchema), asyncHandler(auth.login));
+router.post(
+  '/2fa/verify',
+  credentialLimiter,
+  validateBody(verifyTwoFactorSchema),
+  asyncHandler(auth.verifyTwoFactor),
+);
+router.get('/2fa', authenticate, asyncHandler(twoFactor.status));
+router.post('/2fa/setup', authenticate, asyncHandler(twoFactor.setup));
+router.post(
+  '/2fa/enable',
+  authenticate,
+  credentialLimiter,
+  validateBody(totpCodeSchema),
+  asyncHandler(twoFactor.enable),
+);
+router.post(
+  '/2fa/disable',
+  authenticate,
+  credentialLimiter,
+  validateBody(disableTwoFactorSchema),
+  asyncHandler(twoFactor.disable),
+);
 router.get('/me', authenticate, asyncHandler(auth.me));
 router.post('/refresh', authenticate, asyncHandler(auth.refresh));
 router.patch('/me', authenticate, validateBody(updateProfileSchema), asyncHandler(auth.updateMe));
