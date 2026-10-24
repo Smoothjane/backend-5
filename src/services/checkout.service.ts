@@ -13,6 +13,7 @@ import { PaymentRequestModel, type PaymentRequest } from '@/models/paymentReques
 import { TransactionModel, type Transaction } from '@/models/transaction.model';
 import type { IncomingPayment } from '@/services/horizon';
 import * as horizon from '@/services/horizon';
+import { summarize } from '@/services/analytics.service';
 import { emit } from '@/services/realtime';
 import {
   buildPaymentUri,
@@ -50,6 +51,8 @@ function completeIfPaid(transactionId: string): Transaction {
     TransactionModel.markCompleted(transactionId);
     const done = TransactionModel.findById(transactionId)!;
     emit('transaction:completed', done);
+    // Push today's figures so open dashboards update without refetching.
+    emit('analytics:updated', summarize(1));
     announceLowStock(transactionId);
     return done;
   }

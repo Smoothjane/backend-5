@@ -10,7 +10,11 @@ import { logger } from '@/utils/logger';
  * dashboard on another updates immediately.
  */
 export type RealtimeEvent =
-  'payment:confirmed' | 'payment:expired' | 'transaction:completed' | 'inventory:low';
+  | 'payment:confirmed'
+  | 'payment:expired'
+  | 'transaction:completed'
+  | 'inventory:low'
+  | 'analytics:updated';
 
 const STORE_ROOM = 'store';
 let io: Server | null = null;
