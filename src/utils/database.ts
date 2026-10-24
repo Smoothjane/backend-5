@@ -3,6 +3,7 @@ import { dirname } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { config } from '@/config/config';
 import { logger } from '@/utils/logger';
+import { backfillSearchIndex, SEARCH_SCHEMA } from '@/utils/searchIndex';
 
 let db: DatabaseSync | null = null;
 
@@ -145,6 +146,8 @@ export async function connectDatabase(path: string = config.database.path): Prom
     db.exec('PRAGMA synchronous = NORMAL;');
   }
   db.exec(SCHEMA);
+  db.exec(SEARCH_SCHEMA);
+  backfillSearchIndex(db);
   logger.debug(`Database ready at ${path}`);
   return db;
 }
