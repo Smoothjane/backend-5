@@ -4,10 +4,12 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { config } from '@/config/config';
+import { auditTrail } from '@/middleware/audit.middleware';
 import { errorHandler } from '@/middleware/error.middleware';
 import { notFoundHandler } from '@/middleware/notFound.middleware';
 import { DEFAULT_ROLE_LIMITS, roleRateLimit } from '@/middleware/rateLimit.middleware';
 import analyticsRoutes from '@/routes/analytics.routes';
+import auditRoutes from '@/routes/audit.routes';
 import authRoutes from '@/routes/auth.routes';
 import customerRoutes from '@/routes/customers.routes';
 import paymentRoutes from '@/routes/payments.routes';
@@ -41,6 +43,7 @@ export function createApp(): express.Express {
     ),
   );
   app.use(express.json({ limit: '100kb' }));
+  app.use('/api', auditTrail);
   app.use(compression());
   if (!config.isTest) {
     app.use(
@@ -71,6 +74,7 @@ export function createApp(): express.Express {
   app.use('/api/v1/transactions', transactionRoutes);
   app.use('/api/v1/payments', paymentRoutes);
   app.use('/api/v1/analytics', analyticsRoutes);
+  app.use('/api/v1/audit', auditRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
