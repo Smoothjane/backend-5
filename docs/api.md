@@ -133,6 +133,12 @@ A request returns
 Status runs `pending`, then `paid`, `expired` or `cancelled`. See
 [stellar-payments.md](stellar-payments.md).
 
+## Search
+
+| Method | Path | Role | Notes |
+|---|---|---|---|
+| GET | `/search?q=&types=&limit=` | cashier | Full-text search across `product`, `customer` and `sale` (reference, note, or any item on the sale). Words match as prefixes in any order, accent-insensitive, ranked by relevance (BM25, titles weighted 10x). Returns `[{ kind, id, title, snippet }]` with matches wrapped in `[[ ]]`. `types` filters kinds (comma-separated); `limit` max 50. |
+
 ## Analytics
 
 | Method | Path | Notes |
