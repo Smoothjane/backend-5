@@ -1,11 +1,18 @@
 import { Router } from 'express';
 import { authenticate, authorize } from '@/middleware/auth.middleware';
-import { notFound } from '@/middleware/error.middleware';
+import { AppError, badRequest, notFound } from '@/middleware/error.middleware';
+import { CustomerModel } from '@/models/customer.model';
+import { queueEmail } from '@/services/email.service';
+import { receiptEmail } from '@/services/receipt.service';
 import { validateBody } from '@/middleware/validate.middleware';
 import { PaymentModel } from '@/models/payment.model';
 import { TransactionModel, type TransactionStatus } from '@/models/transaction.model';
 import { asyncHandler, paginatedResponse, parsePagination, sendSuccess } from '@/utils/helpers';
-import { createSaleSchema, refundSchema } from '@/validation/transaction.validation';
+import {
+  createSaleSchema,
+  emailReceiptSchema,
+  refundSchema,
+} from '@/validation/transaction.validation';
 
 const router = Router();
 router.use(authenticate);
@@ -50,6 +57,32 @@ router.post(
   asyncHandler(async (req, res) => {
     const sale = TransactionModel.createSale({ ...req.body, userId: req.user!.sub });
     sendSuccess(res, { ...sale, items: TransactionModel.findItemsByTransactionId(sale.id) }, 201);
+  }),
+);
+
+/** Emails the receipt to an address (or the sale's customer). Sent in the background. */
+router.post(
+  '/:id/receipt/email',
+  validateBody(emailReceiptSchema),
+  asyncHandler(async (req, res) => {
+    const sale = TransactionModel.findById(req.params.id);
+    if (!sale) throw notFound('Transaction');
+    if (sale.status !== 'completed' && sale.status !== 'refunded') {
+      throw new AppError('Only paid sales have a receipt to send', 409);
+    }
+    const to: string | null =
+      req.body.email ??
+      (sale.customerId ? (CustomerModel.findById(sale.customerId)?.email ?? null) : null);
+    if (!to) throw badRequest('No email address: pass one, or attach a customer with an email');
+    queueEmail(
+      receiptEmail(
+        to,
+        sale,
+        TransactionModel.findItemsByTransactionId(sale.id),
+        PaymentModel.findByTransactionId(sale.id),
+      ),
+    );
+    sendSuccess(res, { queued: true, to }, 202);
   }),
 );
 

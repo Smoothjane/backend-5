@@ -77,6 +77,7 @@ Each product includes a computed `lowStock: boolean` (`stock <= lowStockThreshol
 | POST | `/transactions` | cashier | `{ items: [{ productId, quantity }], customerId?, discountCents?, note? }`. Reserves stock atomically and returns the `pending` sale with `items`. |
 | GET | `/transactions` | cashier | Filters: `status`, `customerId`, `from`, `to` (`YYYY-MM-DD`), `search` (reference) |
 | GET | `/transactions/:id` | cashier | Includes `items` and `payments` |
+| POST | `/transactions/:id/receipt/email` | cashier | `{ email? }`. Emails the receipt for a paid or refunded sale to `email`, or the attached customer's address. Returns `202 { queued, to }`; sending happens in the background with retries. |
 | POST | `/transactions/:id/void` | cashier | Pending sales only. Releases stock. |
 | POST | `/transactions/:id/refund` | manager | Completed sales only. `{ restock = true, reason? }` |
 

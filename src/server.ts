@@ -7,7 +7,8 @@ import { startBackupSchedule, stopBackupSchedule } from '@/utils/backup';
 import { closeDatabase, connectDatabase } from '@/utils/database';
 import { logger } from '@/utils/logger';
 import { connectRedis } from '@/utils/redis';
-import { setupQueues } from '@/utils/queue';
+import { closeQueues, setupQueues } from '@/utils/queue';
+import { startEmailWorker } from '@/services/email.service';
 
 export { app };
 
@@ -17,6 +18,7 @@ async function start(): Promise<void> {
   await connectDatabase();
   await connectRedis();
   setupQueues();
+  startEmailWorker();
   attachRealtime(server);
   startPaymentWatcher();
   startBackupSchedule();
@@ -30,6 +32,7 @@ async function shutdown(signal: string): Promise<void> {
   logger.info(`${signal} received, shutting down`);
   stopPaymentWatcher();
   stopBackupSchedule();
+  closeQueues();
   await closeRealtime();
   server.close(() => {
     closeDatabase();

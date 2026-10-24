@@ -20,3 +20,7 @@ export const refundSchema = Joi.object({
   restock: Joi.boolean().default(true),
   reason: Joi.string().allow('').max(300),
 });
+
+export const emailReceiptSchema = Joi.object({
+  email: Joi.string().trim().lowercase().email(),
+});
