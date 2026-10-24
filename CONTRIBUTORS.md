@@ -7,8 +7,17 @@ and GitHub activity, so it lists real accounts only.
 |---|---|
 | [@abayomiwav](https://github.com/abayomiwav) | Organization owner; project setup and the implementation issue backlog (#15 to #38) |
 | [@presidojay1](https://github.com/presidojay1) | Documentation updates |
-| [@jakespepe](https://github.com/jakespepe) | TypeScript project config and tooling (#39) |
+| [@jakespepe](https://github.com/jakespepe) | Compact catalog endpoint for mobile registers (#60); TypeScript config proposal (#39) |
 | [@circleboyslimited](https://github.com/circleboyslimited) | API implementation, Stellar checkout, tests, CI, and docs |
+| [@alansamdev](https://github.com/alansamdev) | Indexed the hot sales queries (#52) |
+| [@boluwacodes](https://github.com/boluwacodes) | Session refresh endpoint (#53) |
+| [@chonilius](https://github.com/chonilius) | Per-role rate limiting (#54) |
+| [@choniszn1](https://github.com/choniszn1) | SQLite lock handling and database health check (#55) |
+| [@davidishere1](https://github.com/davidishere1) | Automatic and on-demand database backups (#56) |
+| [@Derinsolababy](https://github.com/Derinsolababy) | Audit log of state-changing API calls (#57) |
+| [@floraispretty](https://github.com/floraispretty) | Input sanitizing against stored XSS (#58) |
+| [@gideononiru](https://github.com/gideononiru) | Live analytics over Socket.IO (#59) |
+| [@laurastephaniee](https://github.com/laurastephaniee) | Socket limits and session-bound connections (#61) |
 
 ## Forks
 
