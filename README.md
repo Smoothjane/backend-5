@@ -108,7 +108,7 @@ Lists add `pagination: { page, limit, total, pages }`.
 
 Full request and response details: [docs/api.md](docs/api.md).
 Real-time events: `payment:confirmed`, `payment:expired`,
-`transaction:completed`, `inventory:low` (Socket.IO, with the JWT in
+`transaction:completed`, `inventory:low`, `analytics:updated` (Socket.IO, with the JWT in
 `auth.token`).
 
 ## How a Stellar checkout works
