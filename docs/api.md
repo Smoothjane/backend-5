@@ -154,3 +154,4 @@ share one room.
 | `payment:expired` | the expired request |
 | `transaction:completed` | the completed sale |
 | `inventory:low` | `[{ id, name, sku, stock, threshold }]` |
+| `analytics:updated` | today's summary (same shape as `GET /analytics/summary`), sent when a sale completes |
