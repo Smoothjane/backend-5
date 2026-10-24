@@ -17,6 +17,7 @@ import productRoutes from '@/routes/products.routes';
 import storeRoutes from '@/routes/store.routes';
 import transactionRoutes from '@/routes/transactions.routes';
 import userRoutes from '@/routes/users.routes';
+import { connections } from '@/services/realtime';
 import { isDatabaseHealthy } from '@/utils/database';
 import { logger } from '@/utils/logger';
 
@@ -63,6 +64,7 @@ export function createApp(): express.Express {
       version: process.env.npm_package_version ?? '0.2.0',
       environment: config.env,
       stellarNetwork: config.stellar.network,
+      sockets: connections.count(),
     });
   });
 
