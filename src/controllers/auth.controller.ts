@@ -4,11 +4,19 @@ import { AppError, conflict, notFound } from '@/middleware/error.middleware';
 import { signToken } from '@/middleware/auth.middleware';
 import { toPublicUser, UserModel, type Role, type User } from '@/models/user.model';
 import { sendSuccess } from '@/utils/helpers';
+import * as twoFactor from '@/controllers/twoFactor.controller';
+import { issueChallenge } from '@/controllers/twoFactor.controller';
+import { TwoFactorModel } from '@/models/twoFactor.model';
 
 const SALT_ROUNDS = 10;
 
+const publicUser = (user: User) => ({
+  ...toPublicUser(user),
+  twoFactorEnabled: TwoFactorModel.isEnabled(user.id),
+});
+
 const session = (user: User) => ({
-  user: toPublicUser(user),
+  user: publicUser(user),
   token: signToken({ sub: user.id, email: user.email, role: user.role }),
 });
 
@@ -36,13 +44,26 @@ export async function login(req: Request, res: Response): Promise<void> {
   // Same message either way so the response does not reveal which emails exist.
   const ok = user ? await bcrypt.compare(password, user.passwordHash) : false;
   if (!user || !ok) throw new AppError('Invalid email or password', 401);
+  if (TwoFactorModel.isEnabled(user.id)) {
+    // No session yet: the client sends a code with this challenge to /2fa/verify.
+    sendSuccess(res, { twoFactorRequired: true, challenge: issueChallenge(user.id) });
+    return;
+  }
   sendSuccess(res, session(user));
+}
+
+export async function verifyTwoFactor(req: Request, res: Response): Promise<void> {
+  await twoFactor.verifyLogin(req, res, (userId) => {
+    const user = UserModel.findById(userId);
+    if (!user) throw new AppError('Account no longer exists', 401);
+    return session(user);
+  });
 }
 
 export async function me(req: Request, res: Response): Promise<void> {
   const user = UserModel.findById(req.user!.sub);
   if (!user) throw notFound('User');
-  sendSuccess(res, toPublicUser(user));
+  sendSuccess(res, publicUser(user));
 }
 
 /**
