@@ -50,6 +50,7 @@ for each route; "public" means no token is needed.
 | Method | Path | Role | Notes |
 |---|---|---|---|
 | GET | `/products` | public | Filters: `search` (name or SKU), `category`, `lowStock=true`, `includeInactive=true` |
+| GET | `/products/catalog` | public | Every active product with only `id, name, sku, category, priceCents, stock, lowStock`, for phones and tablets. Supports `If-None-Match` (304 when unchanged). |
 | GET | `/products/categories` | public | Distinct active categories |
 | GET | `/products/:id` | public | |
 | POST | `/products` | manager | `{ name, sku, priceCents, stock?, category?, description?, lowStockThreshold?, active? }`. SKUs are uppercased and unique. |
