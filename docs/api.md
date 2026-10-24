@@ -34,6 +34,11 @@ for each route; "public" means no token is needed.
 | POST | `/auth/login` | public | `{ email, password }`. Returns `{ user, token }`. Rate limited to 20 per 15 minutes per IP. |
 | GET | `/auth/me` | any | Current user |
 | PATCH | `/auth/me` | any | `{ name?, currentPassword?, newPassword? }`. A new password requires the current one. |
+| GET | `/auth/2fa` | any | `{ enabled, recoveryCodesLeft }` |
+| POST | `/auth/2fa/setup` | any | Starts enrolment: `{ secret, otpauthUrl }` to show as a QR. 2FA is not on yet. |
+| POST | `/auth/2fa/enable` | any | `{ code }` from the authenticator app. Turns 2FA on and returns 8 one-time `recoveryCodes` (shown once). |
+| POST | `/auth/2fa/disable` | any | `{ password, code }` (code may be a recovery code) |
+| POST | `/auth/2fa/verify` | public | Second sign-in step: `{ challenge, code }` returns `{ user, token }`. When 2FA is on, `/auth/login` returns `{ twoFactorRequired: true, challenge }` (valid 5 minutes) instead of a token. |
 | GET | `/users` | admin | All staff |
 | POST | `/users` | admin | `{ name, email, password, role }` |
 | PATCH | `/users/:id/role` | admin | `{ role }`. Admins cannot change their own role. |
