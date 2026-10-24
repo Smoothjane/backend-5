@@ -18,6 +18,9 @@ and GitHub activity, so it lists real accounts only.
 | [@floraispretty](https://github.com/floraispretty) | Input sanitizing against stored XSS (#58) |
 | [@gideononiru](https://github.com/gideononiru) | Live analytics over Socket.IO (#59) |
 | [@laurastephaniee](https://github.com/laurastephaniee) | Socket limits and session-bound connections (#61) |
+| [@oluwarantimini](https://github.com/oluwarantimini) | Full-text search across products, customers and sales (#63) |
+| [@miraclesonly](https://github.com/miraclesonly) | Queue retries, dead letters and emailed receipts (#64) |
+| [@posimideveloper](https://github.com/posimideveloper) | Two-factor sign-in API (TOTP) (#65) |
 
 ## Forks
 
