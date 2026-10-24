@@ -31,6 +31,31 @@ router.get(
   }),
 );
 
+/**
+ * Compact catalog for phones and tablets: every active product in one
+ * response with only the fields a register needs. Responses carry an ETag,
+ * so a client that already has the current catalog gets an empty 304.
+ */
+router.get(
+  '/catalog',
+  asyncHandler(async (_req, res) => {
+    const { items } = ProductModel.list({}, { page: 1, limit: 10_000, offset: 0 });
+    res.set('Cache-Control', 'private, no-cache');
+    sendSuccess(
+      res,
+      items.map(({ id, name, sku, category, priceCents, stock, lowStock }) => ({
+        id,
+        name,
+        sku,
+        category,
+        priceCents,
+        stock,
+        lowStock,
+      })),
+    );
+  }),
+);
+
 router.get(
   '/categories',
   asyncHandler(async (_req, res) => {
