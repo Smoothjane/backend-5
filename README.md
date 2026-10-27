@@ -173,3 +173,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Security reports go through
 ## License
 
 [MIT](LICENSE)
+
+## Webhook Replay Attack Prevention\n\nWebhook endpoints must validate a timestamp in the signature payload and reject requests older than 5 minutes. Without this, an attacker can replay a captured valid webhook to trigger duplicate actions.
